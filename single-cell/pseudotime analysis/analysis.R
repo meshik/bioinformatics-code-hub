@@ -13,6 +13,7 @@ library(monocle3)  # pseudotime analysis
 library(Matrix)  # sparse matrix
 library(readr)
 library(tibble)
+library(dplyr)
 
 Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 2)
 
