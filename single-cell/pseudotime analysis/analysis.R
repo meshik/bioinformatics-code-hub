@@ -12,7 +12,8 @@ library(readr)
 
 #### Load data ####
 file.path("single-cell", "data", "GSE109816_normal_heart_umi_matrix.csv.gz")
-data <- readr::read_csv("single-cell\\data\\GSE109816_normal_heart_umi_matrix.csv.gz") %>%
+data <- readr::read_csv(
+  "single-cell\\data\\GSE109816_normal_heart_umi_matrix.csv.gz") %>%
   tibble::column_to_rownames("...1") %>%
   as.matrix() %>%
   Matrix(sparse = TRUE)
