@@ -1,65 +1,23 @@
 BiocManager::install("ComplexHeatmap")  # required for CellChat
+install.packages("remotes")
 remotes::install_github("sqjin/CellChat")
+
 #### Load packages ####
-library(Seurat) # general single-cell processing
-library(Matrix) # sparse matrix
-library(readr)
-library(tibble)
 library(dplyr)
 library(CellChat)
 
-Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 2)
-
 #### Load data ####
-expression_matrix <- file.path(
+source(file.path(
   "single-cell",
-  "data",
-  "GSE109816_normal_heart_umi_matrix.csv.gz"
-)
-metadata_path <- file.path(
-  "single-cell",
-  "data",
-  "GSE109816_normal_heart_cell_cluster_info.txt"
-)
-
-data <- readr::read_csv(expression_matrix) %>%
-  tibble::column_to_rownames("...1") %>%
-  as.matrix() %>%
-  Matrix(sparse = TRUE)
-
-metadata <- readr::read_tsv(metadata_path) %>%
-  tibble::column_to_rownames("ID")
-
-seu_obj <- CreateSeuratObject(
-  counts = data,
-  meta.data = metadata,
-  min.cells = 3,
-  min.features = 200
-)
-
-#### Standard Seurat pipeline ####
-seu_obj[["percent.mt"]] <- PercentageFeatureSet(seu_obj, pattern = "^MT-")
-seu_obj <- NormalizeData(
-  seu_obj,
-  normalization.method = "LogNormalize",
-  scale.factor = 10000
-)
-seu_obj <- FindVariableFeatures(
-  seu_obj,
-  selection.method = "vst",
-  nfeatures = 2000
-)
-seu_obj <- ScaleData(seu_obj)
-seu_obj <- RunPCA(seu_obj, features = VariableFeatures(object = seu_obj))
-seu_obj <- FindNeighbors(seu_obj, dims = 1:10)
-seu_obj <- FindClusters(seu_obj, resolution = 0.5)
+  "preprocessing",
+  "load_and_prepare_seurat.R"
+))
+seu_obj <- adult_heart()
 
 ## Increment cluster labels by 1 because cellchat hates 0's
+# Ideally you should 
 seu_obj$seurat_clusters <- as.factor(as.numeric(seu_obj$seurat_clusters) + 1)
-
-seu_obj <- RunUMAP(seu_obj, dims = 1:10)
-DimPlot(seu_obj, reduction = "umap", label = TRUE)
-
+DimPlot(seu_obj, reduction = "umap", label = TRUE, group.by = "seurat_clusters")
 
 #### Create a CellChat object ####
 cellchat <- createCellChat(object = seu_obj, group.by = "seurat_clusters")
