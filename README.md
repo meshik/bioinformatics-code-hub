@@ -9,6 +9,7 @@ The following analyses are planned:
    - fastq processing (quality control, trimming, alignment)
    - Bulk RNA-Seq
      - Differential expression
+     - Pathway Analysis
    - Single-Cell RNA-Seq
      - Cell Annotations
      - Psuedotime
