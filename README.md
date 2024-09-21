@@ -6,13 +6,19 @@ The following analyses are planned:
    - Copy number variation analysis
    - GWAS (Genome-wide association studies)
 2. Transcriptomics
-   - fastq processing (quality control, trimming, alignment)
+   - FASTQ processing
+      - Quality control (FastQC)
+      - Trimming (Trimmomatic)
+      - Genome alignment (STAR)
+      - Transcriptome alignment (HTSeq)
    - Bulk RNA-Seq
      - Differential expression
-     - Pathway Analysis
+        - Volcano plots
+     - Pathway analysis
+        - 
    - Single-Cell RNA-Seq
      - Cell Annotations
-     - Psuedotime
+     - Psuedotime 
      - Ligand-receptor interactions
 3. Proteomics
    - Mass spectrometry 
