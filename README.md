@@ -15,7 +15,6 @@ The following analyses are planned:
      - Differential expression
         - Volcano plots
      - Pathway analysis
-        - 
    - Single-Cell RNA-Seq
      - Cell Annotations
      - Psuedotime 
