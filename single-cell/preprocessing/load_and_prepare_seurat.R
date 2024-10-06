@@ -5,20 +5,9 @@ library(Seurat) # general single-cell processing
 library(Matrix) # sparse matrix
 library(tibble)
 
-adult_heart <- function() {
+adult_heart <- function(expression_matrix, metadata_path) {
 
   #### Load data ####
-  expression_matrix <- file.path(
-    "single-cell",
-    "data",
-    "GSE109816_normal_heart_umi_matrix.csv.gz"
-  )
-  metadata_path <- file.path(
-    "single-cell",
-    "data",
-    "GSE109816_normal_heart_cell_cluster_info.txt"
-  )
-
   data <- readr::read_csv(expression_matrix) %>%
     tibble::column_to_rownames("...1") %>%
     as.matrix() %>%
