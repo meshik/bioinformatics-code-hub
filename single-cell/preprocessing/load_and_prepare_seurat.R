@@ -1,24 +1,13 @@
 Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 2)
 
-library(readr)
-library(Seurat) # general single-cell processing
-library(Matrix) # sparse matrix
-library(tibble)
+library(readr, quietly = TRUE)
+library(Seurat, quietly = TRUE) # general single-cell processing
+library(Matrix, quietly = TRUE) # sparse matrix
+library(tibble, quietly = TRUE) # data manipulation
 
-adult_heart <- function() {
+adult_heart <- function(expression_matrix, metadata_path) {
 
   #### Load data ####
-  expression_matrix <- file.path(
-    "single-cell",
-    "data",
-    "GSE109816_normal_heart_umi_matrix.csv.gz"
-  )
-  metadata_path <- file.path(
-    "single-cell",
-    "data",
-    "GSE109816_normal_heart_cell_cluster_info.txt"
-  )
-
   data <- readr::read_csv(expression_matrix) %>%
     tibble::column_to_rownames("...1") %>%
     as.matrix() %>%
