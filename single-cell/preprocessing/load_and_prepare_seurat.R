@@ -1,9 +1,9 @@
 Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 2)
 
-library(readr)
-library(Seurat) # general single-cell processing
-library(Matrix) # sparse matrix
-library(tibble)
+library(readr, quietly = TRUE)
+library(Seurat, quietly = TRUE) # general single-cell processing
+library(Matrix, quietly = TRUE) # sparse matrix
+library(tibble, quietly = TRUE) # data manipulation
 
 adult_heart <- function(expression_matrix, metadata_path) {
 
