@@ -1,6 +1,7 @@
 # Bioinformatics Code Hub
 A curated collection of code for bioinformatic analyses for anyone to learn and copy for their analyses.
-If you can't find an analysis you want to perform, open an issue and the team will get to work.
+
+If you can't find an analysis you want to perform or if you want an analysis expanded, open an issue and the contributors will make a template for you.
 
 The following analyses are planned:
 1. Genomics
