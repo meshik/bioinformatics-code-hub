@@ -1,5 +1,6 @@
 # Bioinformatics Code Hub
-A curated collection of code for bioinformatic analyses for anyone to learn and copy for their own analyses
+A curated collection of code for bioinformatic analyses for anyone to learn and copy for their analyses.
+If you can't find an analysis you want to perform, open an issue and the team will get to work.
 
 The following analyses are planned:
 1. Genomics
@@ -17,6 +18,7 @@ The following analyses are planned:
      - Pathway analysis
    - Single-Cell RNA-Seq
      - Cell Annotations
+     - Compare cells from two different datasets
      - Psuedotime 
      - Ligand-receptor interactions
 3. Proteomics
@@ -38,7 +40,8 @@ The following analyses are planned:
    - MDVerse
 
 Datasets used:
- - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
+ - Single-cell RNA-Seq:
+    - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
 
  
 Contributions are welcome ❤️
