@@ -1,21 +1,21 @@
-Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 2)
-
-library(readr, quietly = TRUE)
+library(data.table, quietly = TRUE)
 library(Seurat, quietly = TRUE) # general single-cell processing
 library(Matrix, quietly = TRUE) # sparse matrix
 library(tibble, quietly = TRUE) # data manipulation
 
-adult_heart <- function(expression_matrix, metadata_path) {
 
+fetal_human_heart <- function(expression_matrix, metadata_path) {
   #### Load data ####
-  data <- readr::read_csv(expression_matrix) %>%
-    tibble::column_to_rownames("...1") %>%
+  data <- fread(expression_matrix) %>%
+    tibble::column_to_rownames("V1") %>%
     as.matrix() %>%
     Matrix(sparse = TRUE)
+  print(head(data))
 
-  metadata <- readr::read_tsv(metadata_path) %>%
-    tibble::column_to_rownames("ID")
+  metadata <- fread(metadata_path)
+  print(head(metadata))
 
+  #####TESTED UP TO HERE#####
   seu_obj <- CreateSeuratObject(
     counts = data,
     meta.data = metadata,
@@ -40,7 +40,19 @@ adult_heart <- function(expression_matrix, metadata_path) {
   seu_obj <- FindNeighbors(seu_obj, dims = 1:10)
   seu_obj <- FindClusters(seu_obj, resolution = 0.5)
 
-
   seu_obj <- RunUMAP(seu_obj, dims = 1:10)
-
 }
+
+matrix_data <- file.path(
+  "spatial-transcriptomics",
+  "data",
+  "fetal_human_heart",
+  "filtered_matrix.tsv.gz"
+)
+meta_data <- file.path(
+  "spatial-transcriptomics",
+  "data",
+  "fetal_human_heart",
+  "meta_data.tsv.gz"
+)
+data <- fetal_human_heart(matrix_data, meta_data)
