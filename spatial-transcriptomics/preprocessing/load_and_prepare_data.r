@@ -10,18 +10,28 @@ fetal_human_heart <- function(expression_matrix, metadata_path) {
     tibble::column_to_rownames("V1") %>%
     as.matrix() %>%
     Matrix(sparse = TRUE)
-  print(head(data))
+  print(head(data, 1))
 
-  metadata <- fread(metadata_path)
-  print(head(metadata))
+  metadata <- fread(metadata_path) %>%
+    tibble::column_to_rownames("V1")
+  print(head(metadata, 1))
 
-  #####TESTED UP TO HERE#####
   seu_obj <- CreateSeuratObject(
     counts = data,
     meta.data = metadata,
     min.cells = 3,
     min.features = 200
   )
+
+  # spatial data is in 'new_x' and 'new_y' in the metadata:
+  spatial_coords <- meta_data[, c("new_x", "new_y")]
+
+  seurat_obj[["spatial"]] <- CreateDimReducObject(
+    embeddings = as.matrix(spatial_coords),
+    key = "spatial_"
+  )
+
+
 
   #### Standard Seurat pipeline ####
   seu_obj[["percent.mt"]] <- PercentageFeatureSet(seu_obj, pattern = "^MT-")
@@ -55,4 +65,4 @@ meta_data <- file.path(
   "fetal_human_heart",
   "meta_data.tsv.gz"
 )
-data <- fetal_human_heart(matrix_data, meta_data)
+x_test <- fetal_human_heart(matrix_data, meta_data)
