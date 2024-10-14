@@ -24,9 +24,12 @@ fetal_human_heart <- function(expression_matrix, metadata_path) {
   )
 
   # spatial data is in 'new_x' and 'new_y' in the metadata:
-  spatial_coords <- meta_data[, c("new_x", "new_y")]
+  spatial_coords <- metadata[, c("new_x", "new_y")]
+  # Rename columns to match the key
+  colnames(spatial_coords) <- paste0("spatial_", seq_len(ncol(spatial_coords)))
+  print(head(spatial_coords))
 
-  seurat_obj[["spatial"]] <- CreateDimReducObject(
+  seu_obj[["spatial"]] <- CreateDimReducObject(
     embeddings = as.matrix(spatial_coords),
     key = "spatial_"
   )
