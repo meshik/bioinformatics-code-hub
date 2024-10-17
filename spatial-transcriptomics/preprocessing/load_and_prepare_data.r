@@ -10,11 +10,9 @@ fetal_human_heart <- function(expression_matrix, metadata_path) {
     tibble::column_to_rownames("V1") %>%
     as.matrix() %>%
     Matrix(sparse = TRUE)
-  print(head(data, 1))
 
   metadata <- fread(metadata_path) %>%
     tibble::column_to_rownames("V1")
-  print(head(metadata, 1))
 
   seu_obj <- CreateSeuratObject(
     counts = data,
@@ -33,7 +31,6 @@ fetal_human_heart <- function(expression_matrix, metadata_path) {
     embeddings = as.matrix(spatial_coords),
     key = "spatial_"
   )
-
 
 
   #### Standard Seurat pipeline ####
@@ -56,16 +53,4 @@ fetal_human_heart <- function(expression_matrix, metadata_path) {
   seu_obj <- RunUMAP(seu_obj, dims = 1:10)
 }
 
-matrix_data <- file.path(
-  "spatial-transcriptomics",
-  "data",
-  "fetal_human_heart",
-  "filtered_matrix.tsv.gz"
-)
-meta_data <- file.path(
-  "spatial-transcriptomics",
-  "data",
-  "fetal_human_heart",
-  "meta_data.tsv.gz"
-)
-x_test <- fetal_human_heart(matrix_data, meta_data)
+
