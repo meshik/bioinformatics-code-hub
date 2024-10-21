@@ -20,8 +20,10 @@ The following analyses are planned:
    - Single-Cell RNA-Seq
      - Cell Annotations
      - Compare cells from two different datasets
-     - Psuedotime 
-     - Ligand-receptor interactions
+     - ✅Psuedotime 
+     - ✅Ligand-receptor interactions
+   - Spatial Transcriptomics
+     - ✅Visualize clusters on spatial coordinates
 3. Proteomics
    - Mass spectrometry 
    - Protein-protein interactions
