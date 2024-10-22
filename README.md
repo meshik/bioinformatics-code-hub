@@ -20,6 +20,7 @@ The following analyses are planned:
    - Single-Cell RNA-Seq
      - Cell Annotations
      - Compare cells from two different datasets
+     - ✅Transcription factor analysis
      - ✅Psuedotime 
      - ✅Ligand-receptor interactions
    - Spatial Transcriptomics
@@ -45,6 +46,8 @@ The following analyses are planned:
 Datasets used:
  - Single-cell RNA-Seq:
     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
+ - Spatial transcriptomics:
+    - https://data.mendeley.com/datasets/mbvhhf8m62/2
 
  
 Contributions are welcome ❤️
