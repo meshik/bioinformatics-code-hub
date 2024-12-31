@@ -33,9 +33,9 @@ adult_human_heart <- function(expression_matrix, metadata_path) {
   seu_obj <- FindVariableFeatures(
     seu_obj,
     selection.method = "vst",
-    nfeatures = 2000
+    nfeatures = 5000
   )
-  seu_obj <- ScaleData(seu_obj)
+  seu_obj <- ScaleData(seu_obj, features = rownames(seu_obj))
   seu_obj <- RunPCA(seu_obj, features = VariableFeatures(object = seu_obj))
   seu_obj <- FindNeighbors(seu_obj, dims = 1:10)
   seu_obj <- FindClusters(seu_obj, resolution = 0.5)
