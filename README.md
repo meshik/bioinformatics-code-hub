@@ -13,6 +13,7 @@ The following analyses are planned:
       - Trimming (Trimmomatic)
       - Genome alignment (STAR)
       - Transcriptome alignment (HTSeq)
+      - Demultiplexing
    - Bulk RNA-Seq
      - Differential expression
         - Volcano plots
