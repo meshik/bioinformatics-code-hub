@@ -11,7 +11,9 @@ The following analyses are planned:
    - FASTQ processing
       - Quality control (FastQC)
       - Trimming (Trimmomatic)
-      - Genome alignment (STAR)
+      - Genome alignment
+        - STAR
+        - Kallisto
       - Transcriptome alignment (HTSeq)
    - Bulk RNA-Seq
      - Differential expression
