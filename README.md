@@ -13,7 +13,7 @@ The following analyses are planned:
       - Trimming (Trimmomatic)
       - Genome alignment
         - STAR
-        - Kallisto
+        - ✅Kallisto
       - Transcriptome alignment (HTSeq)
    - Bulk RNA-Seq
      - Differential expression
@@ -46,10 +46,12 @@ The following analyses are planned:
    - MDVerse
 
 Datasets used:
- - Single-cell RNA-Seq:
-    - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
- - Spatial transcriptomics:
-    - https://data.mendeley.com/datasets/mbvhhf8m62/2
+   - Single-cell RNA-Seq:
+     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
+   - Spatial transcriptomics:
+     - https://data.mendeley.com/datasets/mbvhhf8m62/2
+   - Transcriptomics:
+     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229677
 
  
 Contributions are welcome ❤️
