@@ -1,5 +1,5 @@
-*/data/**
-# do not ignore the 'data' folders themselves
-!*/data/**/
-# or README files 
-!*/data/**/README.md
+**/data/**
+# do not ignore README files inside data folders
+!**/data/**/README.md
+
+.venv/

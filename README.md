@@ -11,7 +11,9 @@ The following analyses are planned:
    - FASTQ processing
       - Quality control (FastQC)
       - Trimming (Trimmomatic)
-      - Genome alignment (STAR)
+      - Genome alignment
+        - STAR
+        - ✅Kallisto
       - Transcriptome alignment (HTSeq)
       - Demultiplexing
    - Bulk RNA-Seq
@@ -45,10 +47,12 @@ The following analyses are planned:
    - MDVerse
 
 Datasets used:
- - Single-cell RNA-Seq:
-    - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
- - Spatial transcriptomics:
-    - https://data.mendeley.com/datasets/mbvhhf8m62/2
+   - Single-cell RNA-Seq:
+     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
+   - Spatial transcriptomics:
+     - https://data.mendeley.com/datasets/mbvhhf8m62/2
+   - Transcriptomics:
+     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229677
 
  
 Contributions are welcome ❤️
