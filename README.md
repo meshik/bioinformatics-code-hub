@@ -7,6 +7,7 @@ The following analyses are planned:
 1. Genomics
    - Copy number variation analysis
    - GWAS (Genome-wide association studies)
+   - Variant calling
 2. Transcriptomics
    - FASTQ processing
       - Quality control (FastQC)
