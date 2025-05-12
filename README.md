@@ -22,7 +22,7 @@ The following analyses are planned:
         - Volcano plots
      - Pathway analysis
    - Single-Cell RNA-Seq
-     - Cell Annotations
+     - ✅Cell Annotations
      - Compare cells from two different datasets
      - ✅Transcription factor analysis
      - ✅Psuedotime 
