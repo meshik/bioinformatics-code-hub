@@ -79,10 +79,9 @@ if __name__ == "__main__":  # pragma: no cover
     print(Path.cwd())
     adata = adult_human_heart(
         expression_matrix=Path("single-cell/data/GSE109816_normal_heart_umi_matrix.csv.gz"),
-        metadata_path=Path("single-cell/data/GSE109816_normal_heart_umi_matrix.csv.gz")
+        metadata_path=Path("single-cell/data/GSE109816_normal_heart_cell_cluster_info.txt")
     )
     print(adata)
-    
     
 
 
