@@ -46,7 +46,7 @@ def adult_human_heart(
     sc.pp.highly_variable_genes(
         adata, n_top_genes=n_hvg, flavor="seurat_v3", subset=True
     )
-
+    adata.raw = adata  # stores log-normalized, HVG-filtered data
     # ---------- scale & dimensionality reduction ----------
     sc.pp.scale(adata, max_value=10)
     sc.tl.pca(adata, svd_solver="arpack")
