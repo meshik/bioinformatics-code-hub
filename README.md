@@ -3,49 +3,96 @@ A curated collection of code for bioinformatic analyses for anyone to learn and 
 
 If you can't find an analysis you want to perform or if you want an analysis expanded, open an issue and the contributors will make a template for you.
 
-The following analyses are planned:
-1. Genomics
-   - Copy number variation analysis
-   - GWAS (Genome-wide association studies)
-   - Variant calling
-2. Transcriptomics
-   - FASTQ processing
-      - Quality control (FastQC)
-      - Trimming (Trimmomatic)
-      - Genome alignment
-        - STAR
-        - ✅Kallisto
-      - Transcriptome alignment (HTSeq)
-      - Demultiplexing
-   - Bulk RNA-Seq
-     - Differential expression
-        - Volcano plots
-     - Pathway analysis
-   - Single-Cell RNA-Seq
-     - ✅Cell Annotations
-     - Compare cells from two different datasets
-     - ✅Transcription factor analysis
-     - ✅Psuedotime 
-     - ✅Ligand-receptor interactions
-   - Spatial Transcriptomics
-     - ✅Visualize clusters on spatial coordinates
-3. Proteomics
-   - Mass spectrometry 
-   - Protein-protein interactions
-   - Post-translational modifications
-4. Metabolomics
-   - Nuclear Magnetic Resonance (NMR) spectroscopy
-5. Epigenetics
-   - DNA methylation
-   - Chromatin accessibility analysis (ATAC-seq)
-6. Metagenomics
-   - 16S rRNA sequencing
-   - Microbiome diversity
-7. Computer Vision
-   - Microscopy segmentation
-   - MRI
-8. Molecular Dynamics
-   - MDVerse
+## Planned Analyses:
+### Genomics
+- Copy-number variation
+- Variant calling
+  - Small variants (GATK)
+  - Structural variants (Manta)
+  - Haplotype phasing (WhatsHap)
+- Variant annotation (VEP, ANNOVAR)
+- GWAS
+  - QC & imputation (PLINK, Eagle)
+  - Association testing
+- Population genetics
+  - PCA / ADMIXTURE
+  - Selection scans (iHS, Fst)
+
+### Transcriptomics
+- Bulk RNA-seq
+  - QC
+  - Alignment
+  - Counts generation (Kallisto)
+  - Differential expression (DESeq2 / edgeR)
+  - Isoform analysis (IsoformSwitchAnalyzeR)
+  - Co-expression networks (WGCNA)
+  - GSEA / pathway analysis
+- Single-cell RNA-seq
+  - Preprocessing (Cell Ranger / Alevin-fry)
+  - Normalisation & batch correction (SCTransform / Harmony)
+  - Doublet detection (Scrublet)
+  - Clustering & visualisation
+  - Cell-type annotation (CellTypist / SingleR / scmap)
+  - Differential expression
+  - TF analysis (GENIE3 / SCENIC)
+  - Pseudotime / trajectory analysis
+  - Ligand-receptor interactions
+- Spatial transcriptomics
+  - Visualize clusters on spatial coordinates
+  - Spot deconvolution (RCTD)
+  - Image-based QC
+- Long-read transcriptomics (Iso-seq, Nanopore)
+
+### Epigenomics
+- DNA methylation (Bismark)
+- ATAC-seq / chromatin accessibility
+- ChIP-seq
+- Hi-C / 3D genome
+- Single-cell epigenomics (snmC-seq, scATAC)
+
+### Proteomics
+- LC-MS preprocessing (MaxQuant)
+- Differential protein abundance
+- PTM site localisation
+- Spectral library generation
+- Protein–protein interaction networks (STRING / Cytoscape)
+
+### Metabolomics
+- LC-MS untargeted workflows (MS-Dial / XCMS)
+- NMR spectroscopy
+- Pathway mapping (Mummichog)
+
+### Metagenomics
+- 16S/18S rRNA amplicon pipelines (QIIME 2)
+- Shotgun metagenome assembly & binning (MetaBAT)
+- Functional profiling (HUMAnN)
+
+### Structural Bioinformatics & Molecular Simulation
+- Homology modelling (MODELLER)
+- Docking (AutoDock Vina)
+- Molecular dynamics
+  - MDVerse
+  - GROMACS
+  - OpenMM
+
+### Imaging & Computer Vision
+- Bright-field / fluorescence segmentation (Cellpose, Stardist)
+- Cell tracking (DeepCell)
+- Medical imaging (MRI, CT)
+
+### Machine Learning & Statistics
+- ML for omics
+- Deep learning (keras-tensor) for sequence data
+- AutoML notebooks (auto-sklearn)
+
+### Multi-Omics Integration
+- MOFA / DIABLO integrative analysis
+- Network-based integration
+
+### Utilities & QC
+- File-format conversions (BAM ⇆ CRAM)
+- Reference genome downloads (NCBI, Ensembl)
+- Workflow management (Snakemake, Nextflow)
 
 Datasets used:
    - Single-cell RNA-Seq:
