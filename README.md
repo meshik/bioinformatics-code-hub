@@ -22,7 +22,8 @@ If you can't find an analysis you want to perform or if you want an analysis exp
 - Bulk RNA-seq
   - QC
   - Alignment
-  - Counts generation (Kallisto)
+  - Counts generation:
+    - [Kallisto](transcriptomics/kallisto/bash.ipynb)
   - Differential expression (DESeq2 / edgeR)
   - Isoform analysis (IsoformSwitchAnalyzeR)
   - Co-expression networks (WGCNA)
@@ -32,13 +33,16 @@ If you can't find an analysis you want to perform or if you want an analysis exp
   - Normalisation & batch correction (SCTransform / Harmony)
   - Doublet detection (Scrublet)
   - Clustering & visualisation
-  - Cell-type annotation (CellTypist / SingleR / scmap)
+  - Cell-type annotation:
+    - [CellTypist](transcriptomics/single-cell/cell%20annotations/cell%20typist/py.ipynb)
+    - SingleR
+    - scmap
   - Differential expression
-  - TF analysis (GENIE3 / SCENIC)
-  - Pseudotime / trajectory analysis
-  - Ligand-receptor interactions
+  - [TF analysis](transcriptomics/single-cell/transcription%20factor%20analysis/r.ipynb)
+  - [Pseudotime / trajectory analysis](transcriptomics/single-cell/pseudotime%20analysis/r.ipynb)
+  - [Ligand-receptor interactions](transcriptomics/single-cell/ligand-receptor%20analysis/r.ipynb)
 - Spatial transcriptomics
-  - Visualize clusters on spatial coordinates
+  - [Visualize clusters on spatial coordinates](transcriptomics/spatial-transcriptomics/basic%20analysis/r.ipynb)
   - Spot deconvolution (RCTD)
   - Image-based QC
 - Long-read transcriptomics (Iso-seq, Nanopore)
