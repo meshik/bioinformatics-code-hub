@@ -22,9 +22,12 @@ If you can't find an analysis you want to perform or if you want an analysis exp
 - Bulk RNA-seq
   - QC
   - Alignment
+  - Differential expression:
+    - [DESeq2 - R](transcriptomics/bulk/DESeq2/r.ipynb)
+    - PyDESeq2
+    - edgeR
   - Counts generation:
     - [Kallisto](transcriptomics/kallisto/bash.ipynb)
-  - Differential expression (DESeq2 / edgeR)
   - Isoform analysis (IsoformSwitchAnalyzeR)
   - Co-expression networks (WGCNA)
   - GSEA / pathway analysis
