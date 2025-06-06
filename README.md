@@ -23,7 +23,10 @@ If you can't find an analysis you want to perform or if you want an analysis exp
   - QC
   - Alignment
   - Counts generation (Kallisto)
-  - Differential expression (DESeq2 / edgeR)
+  - Differential expression:
+    - [DESeq2 - R](transcriptomics/bulk/DESeq2/r.ipynb)
+    - PyDESeq2
+    - edgeR
   - Isoform analysis (IsoformSwitchAnalyzeR)
   - Co-expression networks (WGCNA)
   - GSEA / pathway analysis
