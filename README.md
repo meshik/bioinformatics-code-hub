@@ -24,7 +24,7 @@ If you can't find an analysis you want to perform or if you want an analysis exp
   - Alignment
   - Differential expression:
     - [DESeq2 - R](transcriptomics/bulk/DESeq2/r.ipynb)
-    - PyDESeq2
+    - [PyDESeq2](transcriptomics/bulk/DESeq2/py.ipynb)
     - edgeR
   - Counts generation:
     - [Kallisto](transcriptomics/kallisto/bash.ipynb)
