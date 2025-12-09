@@ -102,6 +102,8 @@ If you can't find an analysis you want to perform or if you want an analysis exp
 - Workflow management (Snakemake, Nextflow)
 
 Datasets used:
+   - Bulk RNA-Seq:
+     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164073 
    - Single-cell RNA-Seq:
      - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
    - Spatial transcriptomics:
