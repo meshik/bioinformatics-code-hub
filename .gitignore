@@ -1,5 +1,7 @@
 **/data/**
 # do not ignore README files inside data folders
 !**/data/**/README.md
+!**/data/**/downloaders/
+!**/data/**/downloaders/**
 
 .venv/
