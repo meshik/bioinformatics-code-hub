@@ -5,3 +5,4 @@
 !**/data/**/downloaders/**
 
 .venv/
+.vscode/settings.json
