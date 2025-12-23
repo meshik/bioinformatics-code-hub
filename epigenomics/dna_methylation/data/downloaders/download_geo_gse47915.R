@@ -1,99 +1,72 @@
 download <- function(out_dir, gse = "GSE47915") {
   ds_dir   <- file.path(out_dir, "geo_gse47915_prostate_450k")
   idat_dir <- file.path(ds_dir, "idats")
-
   dir.create(idat_dir, recursive = TRUE, showWarnings = FALSE)
 
-  # Download supplementary files (GSE47915_RAW.tar)
+  # 1) Download + extract (handles common "RAW.tar" + nested tars)
   GEOquery::getGEOSuppFiles(GEO = gse, baseDir = ds_dir, makeDirectory = TRUE)
-
-  # Find the RAW tar wherever GEOquery put it
   raw_tar <- list.files(ds_dir, pattern = paste0("^", gse, "_RAW\\.tar$"),
                         recursive = TRUE, full.names = TRUE)[1]
-
-  # Extract everything into idats/ (works whether tar contains idat.gz or nested tars)
   utils::untar(raw_tar, exdir = idat_dir)
 
-  # If there are nested archives (some GEO series do this), extract them too
-  nested_archives <- list.files(
-    idat_dir,
-    pattern = "\\.(tar|tgz|tar\\.gz)$",
-    recursive = TRUE,
-    full.names = TRUE
-  )
-  for (f in nested_archives) {
-    utils::untar(f, exdir = idat_dir)
+  for (i in 1:2) { # two passes covers typical nested tar layouts
+    nested <- list.files(idat_dir, pattern = "\\.(tar|tgz|tar\\.gz)$",
+                         recursive = TRUE, full.names = TRUE)
+    for (f in nested) utils::untar(f, exdir = idat_dir)
   }
 
-  # Decompress *.idat.gz to *.idat
-  idat_gz <- list.files(
-    idat_dir,
-    pattern = "\\.idat\\.gz$",
-    recursive = TRUE,
-    full.names = TRUE,
-    ignore.case = TRUE
-  )
-  if (length(idat_gz) > 0) {
-    if (!requireNamespace("R.utils", quietly = TRUE)) {
-      install.packages("R.utils")
-    }
-    vapply(idat_gz, function(f) R.utils::gunzip(f, overwrite = TRUE, remove = FALSE), character(1))
-  }
+  # 2) Gunzip any *.idat.gz
+  if (!requireNamespace("R.utils", quietly = TRUE)) install.packages("R.utils")
+  gz <- list.files(idat_dir, pattern = "\\.idat\\.gz$", recursive = TRUE,
+                   full.names = TRUE, ignore.case = TRUE)
+  for (f in gz) R.utils::gunzip(f, overwrite = TRUE, remove = FALSE)
 
-    # 5) Write targets.csv with Basename RELATIVE to ds_dir (no machine paths)
-    # List the actual IDAT files (these exist, so normalizePath works)
-    grn_files <- list.files(
-    idat_dir,
-    pattern = "_Grn\\.idat$",
-    full.names = TRUE,
-    recursive = TRUE,
-    ignore.case = TRUE
-    )
-    red_files <- list.files(
-    idat_dir,
-    pattern = "_Red\\.idat$",
-    full.names = TRUE,
-    recursive = TRUE,
-    ignore.case = TRUE
-    )
+  # 3) Build Basename RELATIVE to ds_dir (supports nested folders; no copying)
+  ds_norm <- normalizePath(ds_dir, winslash = "/", mustWork = TRUE)
 
-    # Normalize only existing file paths
-    ds_norm  <- normalizePath(ds_dir, winslash = "/", mustWork = TRUE)
-    grn_norm <- normalizePath(grn_files, winslash = "/", mustWork = TRUE)
-    red_norm <- normalizePath(red_files, winslash = "/", mustWork = TRUE)
+  grn_files <- list.files(idat_dir, pattern = "_Grn\\.idat$", recursive = TRUE,
+                          full.names = TRUE, ignore.case = TRUE)
+  grn_rel <- sub(paste0("^", ds_norm, "/"), "",
+                 normalizePath(grn_files, winslash = "/", mustWork = TRUE))
 
-    # Make them relative to ds_dir
-    grn_rel <- sub(paste0("^", ds_norm, "/"), "", grn_norm)
-    red_rel <- sub(paste0("^", ds_norm, "/"), "", red_norm)
+  basenames_rel <- sub("_Grn\\.idat$", "", grn_rel, ignore.case = TRUE)
+  has_red <- file.exists(file.path(ds_dir, paste0(basenames_rel, "_Red.idat")))
+  basenames_rel <- basenames_rel[has_red]
 
-    # Strip channel suffix to get Basename prefixes (these prefixes don't need to "exist")
-    grn_base_rel <- sub("_Grn\\.idat$", "", grn_rel, ignore.case = TRUE)
-    red_base_rel <- sub("_Red\\.idat$", "", red_rel, ignore.case = TRUE)
+  sample_name <- basename(basenames_rel)
+  geo_accession <- sub("^(GSM\\d+).*", "\\1", sample_name)
 
-    bases_rel <- intersect(grn_base_rel, red_base_rel)
-
-    targets <- data.frame(
-    Sample_Name = basename(bases_rel),
-    Basename    = bases_rel,
+  # 4) Pull GEO titles + label benign/tumor
+  gsm_pd <- Biobase::pData(GEOquery::getGEO(gse, GSEMatrix = TRUE)[[1]])
+  meta <- data.frame(
+    geo_accession = gsm_pd$geo_accession,
+    title = gsm_pd$title,
     stringsAsFactors = FALSE
-    )
+  )
+  title <- meta$title[match(geo_accession, meta$geo_accession)]
 
-    utils::write.csv(targets, file.path(ds_dir, "targets.csv"), row.names = FALSE)
+  Sample_Group <- ifelse(grepl("benign", title, ignore.case = TRUE), "benign",
+                  ifelse(grepl("tumou?r", title, ignore.case = TRUE), "tumor", NA))
 
+  targets <- data.frame(
+    Sample_Name   = sample_name,
+    geo_accession = geo_accession,
+    title         = title,
+    Sample_Group  = Sample_Group,
+    Basename      = basenames_rel,
+    stringsAsFactors = FALSE
+  )
 
-
+  utils::write.csv(targets, file.path(ds_dir, "targets.csv"), row.names = FALSE)
   invisible(ds_dir)
 }
 
 download_if_missing <- function(out_dir, gse = "GSE47915") {
-  ds_dir   <- file.path(out_dir, "geo_gse47915_prostate_450k")
-  idat_dir <- file.path(ds_dir, "idats")
-  targets_path <- file.path(ds_dir, "targets.csv")
-
-  have_idats <- length(list.files(idat_dir, pattern = "_Grn\\.idat(\\.gz)?$",
-                                  recursive = TRUE, ignore.case = TRUE)) > 0
-  if (file.exists(targets_path) && have_idats) {
-    return(invisible(ds_dir))
-  }
-  download(out_dir, gse = gse)
+  ds_dir <- file.path(out_dir, "geo_gse47915_prostate_450k")
+  ok <- file.exists(file.path(ds_dir, "targets.csv")) &&
+    length(list.files(file.path(ds_dir, "idats"),
+                      pattern = "_Grn\\.idat(\\.gz)?$",
+                      recursive = TRUE, ignore.case = TRUE)) > 0
+  if (!ok) download(out_dir, gse = gse)
+  invisible(ds_dir)
 }
