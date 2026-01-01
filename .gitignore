@@ -1,5 +1,8 @@
 **/data/**
-# do not ignore README files inside data folders
+# do not ignore README files or downloader scripts inside data folders
 !**/data/**/README.md
+!**/data/**/downloaders/
+!**/data/**/downloaders/**
 
 .venv/
+*.vscode*
