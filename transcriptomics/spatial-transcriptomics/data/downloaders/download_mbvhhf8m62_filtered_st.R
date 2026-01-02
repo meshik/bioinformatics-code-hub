@@ -1,108 +1,68 @@
-# spatial/data/downloaders/download_mbvhhf8m62_filtered_st.R
+# - Put two files in ds_dir with stable names:
+#     filtered_matrix.tsv.gz
+#     meta_data.tsv.gz
 
-#' Download filtered spatial transcriptomics matrices for developing human heart (Mendeley mbvhhf8m62).
-#'
-#' This script is intentionally idempotent:
-#' - download_if_missing() will do nothing if expected files already exist.
-#' - download() performs download + extraction into the target dataset directory.
-#'
-#' Notes:
-#' - Mendeley Data landing pages are sometimes JS-rendered. For reproducible automation, this script
-#'   supports providing a direct ZIP URL via an environment variable:
-#'     MENDELEY_MBVHHF8M62_V2_ZIP_URL
-#' - That URL should point to the "Download All" ZIP for version 2 (mbvhhf8m62/2),
-#'   which contains Filtered/filtered_ST_matrix_and_meta_data/{filtered_matrix,meta_data}.tsv(.gz)
-#'
-#' @param ds_dir Character. Output directory to populate with filtered_matrix.tsv.gz and meta_data.tsv.gz.
-#' @param zip_url Character.
-#' @return Invisibly TRUE on success, error otherwise.
 download <- function(
   ds_dir,
   zip_url = "https://data.mendeley.com/public-files/datasets/mbvhhf8m62/files/f76ec6ad-addd-41c3-9eec-56e31ddbac71/file_downloaded"
 ) {
-  if (!dir.exists(ds_dir)) dir.create(ds_dir, recursive = TRUE, showWarnings = FALSE)
+  # --- Ensure output directory exists ---
+  dir.create(ds_dir, recursive = TRUE, showWarnings = FALSE)
 
-  message("Downloading dataset ZIP...")
+  # --- Download ZIP to a temp file ---
   tmp_zip <- tempfile(fileext = ".zip")
+  tmp_dir <- tempfile(pattern = "mbvhhf8m62_")
+  dir.create(tmp_dir, recursive = TRUE, showWarnings = FALSE)
+  on.exit(unlink(c(tmp_zip, tmp_dir), recursive = TRUE, force = TRUE), add = TRUE)
+
+  message("Downloading ZIP...")
   utils::download.file(zip_url, destfile = tmp_zip, mode = "wb", quiet = FALSE)
 
-  message("Extracting ZIP...")
-  tmp_dir <- tempfile(pattern = "mbvhhf8m62_v2_")
-  dir.create(tmp_dir, recursive = TRUE, showWarnings = FALSE)
-  utils::unzip(tmp_zip, exdir = tmp_dir)
+  # --- Inspect ZIP contents and pick the first match for each required file ---
+  zip_names <- utils::unzip(tmp_zip, list = TRUE)$Name
 
-  # Locate the two files we care about (some zips store as .tsv, some as .tsv.gz)
-  fm_candidates <- list.files(
-    tmp_dir,
-    pattern = "filtered_matrix\\.tsv(\\.gz)?$",
-    recursive = TRUE,
-    full.names = TRUE
-  )
-  md_candidates <- list.files(
-    tmp_dir,
-    pattern = "meta_data\\.tsv(\\.gz)?$",
-    recursive = TRUE,
-    full.names = TRUE
-  )
+  m_in_zip <- zip_names[grepl("filtered_matrix\\.tsv(\\.gz)?$", zip_names)]
+  d_in_zip <- zip_names[grepl("meta_data\\.tsv(\\.gz)?$", zip_names)]
+  stopifnot(length(m_in_zip) >= 1, length(d_in_zip) >= 1)
 
-  if (length(fm_candidates) < 1 || length(md_candidates) < 1) {
-    stop(
-      paste(
-        "Could not find filtered_matrix.tsv(.gz) and/or meta_data.tsv(.gz) in the extracted ZIP.",
-        "\nFound filtered_matrix candidates: ", paste(fm_candidates, collapse = ", "),
-        "\nFound meta_data candidates: ", paste(md_candidates, collapse = ", "),
-        sep = ""
-      )
-    )
-  }
+  # --- Extract only those two files (faster + cleaner than extracting the entire archive) ---
+  message("Extracting required files from ZIP...")
+  utils::unzip(tmp_zip, files = c(m_in_zip[1], d_in_zip[1]), exdir = tmp_dir)
 
-  filtered_matrix_src <- fm_candidates[1]
-  meta_data_src <- md_candidates[1]
+  src_matrix <- file.path(tmp_dir, m_in_zip[1])
+  src_meta   <- file.path(tmp_dir, d_in_zip[1])
 
-  # Standardize names in ds_dir
-  filtered_matrix_dst <- file.path(ds_dir, "filtered_matrix.tsv.gz")
-  meta_data_dst <- file.path(ds_dir, "meta_data.tsv.gz")
-
-  # Copy and gzip if needed
-  copy_to_gz <- function(src, dst_gz) {
-    if (grepl("\\.gz$", src)) {
+  # --- Write standardized outputs (always .tsv.gz) ---
+  # Why: the analysis notebook should not care whether the original archive stored .tsv or .tsv.gz
+  write_gz <- function(src, dst_gz) {
+    if (grepl("\\.gz$", src, ignore.case = TRUE)) {
       file.copy(src, dst_gz, overwrite = TRUE)
       return(invisible(TRUE))
     }
-    # gzip via connection (no extra deps)
-    con_in <- file(src, open = "rb")
-    con_out <- gzfile(dst_gz, open = "wb")
-    on.exit({
-      try(close(con_in), silent = TRUE)
-      try(close(con_out), silent = TRUE)
-    }, add = TRUE)
-    while (length(buf <- readBin(con_in, what = "raw", n = 1024 * 1024)) > 0) {
-      writeBin(buf, con_out)
+    in_con  <- file(src, "rb")
+    out_con <- gzfile(dst_gz, "wb")
+    on.exit({ try(close(in_con), silent = TRUE); try(close(out_con), silent = TRUE) }, add = TRUE)
+
+    repeat {
+      buf <- readBin(in_con, what = "raw", n = 1024 * 1024)
+      if (!length(buf)) break
+      writeBin(buf, out_con)
     }
     invisible(TRUE)
   }
 
   message("Writing standardized outputs...")
-  copy_to_gz(filtered_matrix_src, filtered_matrix_dst)
-  copy_to_gz(meta_data_src, meta_data_dst)
+  write_gz(src_matrix, file.path(ds_dir, "filtered_matrix.tsv.gz"))
+  write_gz(src_meta,   file.path(ds_dir, "meta_data.tsv.gz"))
 
-  message("Done.")
   invisible(TRUE)
 }
 
-#' Idempotent wrapper: download only if expected files are missing.
-#' @param ds_dir Character. Dataset directory.
-#' @return Invisibly TRUE if present or downloaded.
 download_if_missing <- function(ds_dir) {
+  # Idempotency: do nothing if both standardized outputs exist
   fm <- file.path(ds_dir, "filtered_matrix.tsv.gz")
   md <- file.path(ds_dir, "meta_data.tsv.gz")
-
-  if (file.exists(fm) && file.exists(md)) {
-    message("Dataset already present: ", ds_dir)
-    return(invisible(TRUE))
-  }
-
-  message("Dataset missing; downloading to: ", ds_dir)
-  download(ds_dir = ds_dir)
+  if (file.exists(fm) && file.exists(md)) return(invisible(TRUE))
+  download(ds_dir)
   invisible(TRUE)
 }
