@@ -56,7 +56,8 @@ Good at bioinformatics? Consider contributing your code!
 - Long-read transcriptomics (Iso-seq, Nanopore)
 
 ### Epigenomics
-- DNA methylation (Bismark)
+- DNA methylation
+  - Illumina array ([450k](epigenomics/dna_methylation/r.ipynb), 850k, EPIC)
 - ATAC-seq / chromatin accessibility
 - ChIP-seq
 - Hi-C / 3D genome
