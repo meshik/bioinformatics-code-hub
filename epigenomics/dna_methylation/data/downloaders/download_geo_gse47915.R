@@ -24,7 +24,6 @@ download <- function(out_dir, gse = "GSE47915") {
   targets <- data.frame( 
     Sample_Name   = sample_name,
     geo_accession = geo_accession,
-    title         = title,
     Sample_Group  = Sample_Group,
     Basename      = file.path("idats", sample_name)  # relative to ds_dir
   )
