@@ -1,7 +1,12 @@
 # Bioinformatics Code Hub
-A curated collection of code for bioinformatic analyses for anyone to learn and copy for their analyses.
+A community collection of bioinformatic analyses for anyone to learn and adapt.
 
-If you can't find an analysis you want to perform or if you want an analysis expanded, open an issue and the contributors will make a template for you.
+Need help with an analysis? You can open an issue:
+- Request a specific analysis
+- Request an analysis expanded for your needs
+- Request help with downloading/processing a specific dataset
+
+Good at bioinformatics? Consider contributing your code!
 
 ## Planned Analyses:
 ### Genomics
@@ -45,7 +50,7 @@ If you can't find an analysis you want to perform or if you want an analysis exp
   - [Pseudotime / trajectory analysis](transcriptomics/single-cell/pseudotime%20analysis/r.ipynb)
   - [Ligand-receptor interactions](transcriptomics/single-cell/ligand-receptor%20analysis/r.ipynb)
 - Spatial transcriptomics
-  - [Visualize clusters on spatial coordinates](transcriptomics/spatial-transcriptomics/basic%20analysis/r.ipynb)
+  - [Visualize clusters and genes on spatial coordinates](transcriptomics/spatial-transcriptomics/basic%20analysis/r.ipynb)
   - Spot deconvolution (RCTD)
   - Image-based QC
 - Long-read transcriptomics (Iso-seq, Nanopore)
