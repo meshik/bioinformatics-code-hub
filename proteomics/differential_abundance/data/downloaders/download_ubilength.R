@@ -6,11 +6,6 @@
 #     - proteinGroups.tsv
 #     - experimental_design.csv
 #     - SOURCE.txt
-#
-# Why a contract here?
-# - proteinGroups.tsv is exactly what MaxQuant produces (so this mirrors real life).
-# - experimental_design.csv is the minimal sample annotation most tools need.
-# - Keeping these as plain text makes notebooks language-agnostic and easy to adapt.
 
 #' Download the UbiLength label-free proteomics dataset
 #'
