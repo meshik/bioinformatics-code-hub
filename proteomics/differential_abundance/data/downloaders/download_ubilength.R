@@ -1,21 +1,8 @@
-# download_ubilength.R
-#
-# Idempotent downloader for the UbiLength LFQ proteomics example dataset.
-# Writes plain-text "contract" files into:
-#   <out_dir>/ubilength_ubiquitin_interactors/
-#     - proteinGroups.tsv
-#     - experimental_design.csv
-#     - SOURCE.txt
-
-#' Download the UbiLength label-free proteomics dataset
-#'
-#' @param out_dir Character scalar. Parent directory for the dataset folder.
-#' @param dep_version Character scalar. Version of DEP source tarball to use as a data container.
-#' @param tar_url Optional. Override URL for the DEP source tarball.
-#' @return Invisibly returns the dataset directory path.
-download <- function(out_dir,
-                     dep_version = "1.32.0",
-                     tar_url = NULL) {
+download <- function(
+  out_dir,
+  dep_version = "1.32.0",
+  tar_url = NULL
+) {
   stopifnot(is.character(out_dir), length(out_dir) == 1)
   stopifnot(is.character(dep_version), length(dep_version) == 1)
 
