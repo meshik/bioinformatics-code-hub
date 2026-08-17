@@ -1,128 +1,232 @@
-download <- function(
-  out_dir,
-  dep_version = "1.32.0",
-  tar_url = NULL
-) {
-  stopifnot(is.character(out_dir), length(out_dir) == 1)
-  stopifnot(is.character(dep_version), length(dep_version) == 1)
+#' Download the UbiLength LFQ proteomics dataset
+#'
+#' Downloads the UbiLength example data from the pinned DEP source package
+#' and writes the proteinGroups table and experimental design as plain-text files.
+#'
+#' @param out_dir Character scalar. Parent data directory.
+#' @return Invisibly returns the dataset directory.
+download <- function(out_dir) {
 
-  ds_dir  <- file.path(out_dir, "ubilength_ubiquitin_interactors")
-  raw_dir <- file.path(ds_dir, "raw")
-  dir.create(raw_dir, recursive = TRUE, showWarnings = FALSE)
-
-  # DEP is deprecated, but it’s a convenient container for this tiny example dataset.
-  # We only use it to materialize UbiLength into plain-text files; analysis uses proDA.
-  url_candidates <- c(
-    sprintf("https://bioconductor.org/packages/release/bioc/src/contrib/DEP_%s.tar.gz", dep_version),
-    # Common fallback if the release URL changes or is archived:
-    sprintf("https://bioconductor.org/packages/3.22/bioc/src/contrib/Archive/DEP/DEP_%s.tar.gz", dep_version)
+  # Pin the exact DEP package version that contains the UbiLength dataset.
+  dep_version <- "1.32.0"
+  # Pin the Bioconductor release that distributed DEP 1.32.0.
+  bioc_version <- "3.22"
+  # Final location for the materialized dataset files.
+  ds_dir <- file.path(
+    out_dir,
+    "ubilength_ubiquitin_interactors"
   )
-  if (!is.null(tar_url)) url_candidates <- c(tar_url, url_candidates)
 
-  tar_path <- file.path(raw_dir, sprintf("DEP_%s.tar.gz", dep_version))
+  # Try the normal version-specific Bioconductor URL first.
+  # The archive URL is a fallback in case the retired package is moved.
+  urls <- c(
+    sprintf(
+      "https://bioconductor.org/packages/%s/bioc/src/contrib/DEP_%s.tar.gz",
+      bioc_version,
+      dep_version
+    ),
+    sprintf(
+      "https://bioconductor.org/packages/%s/bioc/src/contrib/Archive/DEP/DEP_%s.tar.gz",
+      bioc_version,
+      dep_version
+    )
+  )
 
-  if (!file.exists(tar_path)) {
-    ok <- FALSE
-    last_err <- NULL
-    for (u in url_candidates) {
-      tryCatch({
-        utils::download.file(u, tar_path, mode = "wb", quiet = TRUE)
-        ok <- TRUE
-      }, error = function(e) {
-        last_err <<- e
-      })
-      if (ok && file.exists(tar_path) && file.info(tar_path)$size > 0) break
-    }
-    if (!ok) {
-      stop(
-        "Failed to download the DEP source tarball from all candidate URLs.\n",
-        "Tried:\n- ", paste(url_candidates, collapse = "\n- "), "\n\n",
-        "Last error:\n", as.character(last_err)
-      )
-    }
-  }
-
-  tmp_dir <- tempfile("DEP_src_")
+  # Create a temporary working directory.
+  # The DEP tarball and .rda files are only needed while constructing the
+  # analysis-ready TSV/CSV files
+  tmp_dir <- tempfile("ubilength_")
   dir.create(tmp_dir)
-  on.exit(unlink(tmp_dir, recursive = TRUE, force = TRUE), add = TRUE)
 
-  utils::untar(tar_path, exdir = tmp_dir)
+  # Remove the temporary directory automatically when download() finishes,
+  # including when the function exits because of an error.
+  on.exit(
+    unlink(tmp_dir, recursive = TRUE),
+    add = TRUE
+  )
 
-  dep_data_dir <- file.path(tmp_dir, "DEP", "data")
-  rda_files <- c("UbiLength.rda", "UbiLength_ExpDesign.rda")
-  for (f in rda_files) {
-    src <- file.path(dep_data_dir, f)
-    if (!file.exists(src)) {
-      stop("Expected file not found inside the tarball: ", src)
+  # Local temporary path for the downloaded DEP source tarball.
+  tar_path <- file.path(
+    tmp_dir,
+    sprintf("DEP_%s.tar.gz", dep_version)
+  )
+
+  # Try each candidate URL until one download succeeds.
+  for (url in urls) {
+
+    # download.file() normally throws an error when a URL fails.
+    # try(..., silent = TRUE) lets us attempt the fallback URL instead.
+    status <- try(
+      utils::download.file(
+        url,
+        tar_path,
+        mode = "wb",  # binary mode avoids corrupting compressed files
+        quiet = TRUE
+      ),
+      silent = TRUE
+    )
+
+    # A successful download returns status code 0.
+    # Stop trying URLs as soon as one succeeds.
+    if (!inherits(status, "try-error") && status == 0) {
+      break
     }
-    file.copy(src, file.path(raw_dir, f), overwrite = TRUE)
   }
 
-  e <- new.env(parent = emptyenv())
-  base::load(file.path(raw_dir, "UbiLength.rda"), envir = e)
-  base::load(file.path(raw_dir, "UbiLength_ExpDesign.rda"), envir = e)
-
-  if (!exists("UbiLength", envir = e, inherits = FALSE)) stop("Missing object: UbiLength")
-  if (!exists("UbiLength_ExpDesign", envir = e, inherits = FALSE)) stop("Missing object: UbiLength_ExpDesign")
-
-  protein_groups <- get("UbiLength", envir = e, inherits = FALSE)
-  exp_design     <- get("UbiLength_ExpDesign", envir = e, inherits = FALSE)
-
-  # Validate and reduce the experimental design to a minimal schema.
-  needed <- c("label", "condition", "replicate")
-  if (!all(needed %in% colnames(exp_design))) {
+  # Fail clearly if neither Bioconductor location worked.
+  if (inherits(status, "try-error") || status != 0) {
     stop(
-      "UbiLength_ExpDesign is missing expected columns. Found: ",
-      paste(colnames(exp_design), collapse = ", ")
+      "Failed to download DEP ",
+      dep_version
     )
   }
-  exp_design_min <- exp_design[, needed, drop = FALSE]
 
-  dir.create(ds_dir, recursive = TRUE, showWarnings = FALSE)
+  # Extract the source package into the temporary directory.
+  # This creates a DEP/ directory containing the package source and bundled data.
+  utils::untar(
+    tar_path,
+    exdir = tmp_dir
+  )
 
+  # DEP stores its bundled .rda dataset objects under DEP/data/.
+  dep_data_dir <- file.path(
+    tmp_dir,
+    "DEP",
+    "data"
+  )
+
+  # Load the .rda objects into an isolated environment rather than adding
+  # UbiLength and UbiLength_ExpDesign directly to the caller's workspace.
+  data_env <- new.env()
+
+  # Load the MaxQuant-style proteinGroups example table.
+  base::load(
+    file.path(
+      dep_data_dir,
+      "UbiLength.rda"
+    ),
+    envir = data_env
+  )
+
+  # Load the corresponding sample-level experimental design.
+  base::load(
+    file.path(
+      dep_data_dir,
+      "UbiLength_ExpDesign.rda"
+    ),
+    envir = data_env
+  )
+
+  # Extract the proteinGroups-style table from the temporary environment.
+  protein_groups <- data_env$UbiLength
+
+  # Keep only the sample metadata needed by the downstream notebook:
+  # - label: matches the LFQ intensity column names
+  # - condition: biological group
+  # - replicate: replicate number within condition
+  experimental_design <- data_env$UbiLength_ExpDesign[
+    ,
+    c(
+      "label",
+      "condition",
+      "replicate"
+    )
+  ]
+
+  # Create the final dataset directory.
+  # recursive = TRUE also creates out_dir if necessary.
+  dir.create(
+    ds_dir,
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+
+  # Write the MaxQuant-style protein table as tab-separated text.
+  # TSV preserves the wide table structure and is easy to read from R,
+  # Python, command-line tools, and spreadsheet software.
   utils::write.table(
     protein_groups,
-    file.path(ds_dir, "proteinGroups.tsv"),
+    file.path(
+      ds_dir,
+      "proteinGroups.tsv"
+    ),
     sep = "\t",
     quote = FALSE,
     row.names = FALSE
   )
+
+  # Write the compact sample metadata table as CSV.
   utils::write.csv(
-    exp_design_min,
-    file.path(ds_dir, "experimental_design.csv"),
+    experimental_design,
+    file.path(
+      ds_dir,
+      "experimental_design.csv"
+    ),
     row.names = FALSE
   )
 
-  provenance <- c(
-    "UbiLength example dataset (ubiquitin interactors; MaxQuant-style proteinGroups).",
-    "Analysis notebook uses proDA (missing-value-aware differential abundance).",
-    sprintf("Data extracted from DEP_%s source tarball (used only as a data container).", dep_version),
-    sprintf("First successful download URL: %s", url_candidates[1])
+  # Record basic provenance so the generated files remain traceable to their
+  # original study and exact package source.
+  writeLines(
+    c(
+      "Dataset: UbiLength",
+      "Description: LFQ data for interactors of linear ubiquitin baits of different lengths.",
+      "Original study: Zhang et al., Molecular Cell (2017).",
+      "DOI: 10.1016/j.molcel.2017.01.004",
+      sprintf(
+        "Source: DEP %s, Bioconductor %s",
+        dep_version,
+        bioc_version
+      ),
+      sprintf(
+        "Downloaded from: %s",
+        url
+      )
+    ),
+    file.path(
+      ds_dir,
+      "SOURCE.txt"
+    )
   )
-  writeLines(provenance, con = file.path(ds_dir, "SOURCE.txt"))
 
+  # Return the dataset directory without printing it automatically.
   invisible(ds_dir)
 }
 
-#' Download UbiLength if missing (idempotent)
+
+#' Download UbiLength if missing
 #'
-#' @param out_dir Character scalar.
-#' @param dep_version Character scalar.
-#' @param tar_url Optional URL override.
-#' @return Invisibly returns the dataset directory path.
-download_if_missing <- function(out_dir,
-                                dep_version = "1.32.0",
-                                tar_url = NULL) {
-  stopifnot(is.character(out_dir), length(out_dir) == 1)
+#' @param out_dir Character scalar. Parent data directory.
+#' @return Invisibly returns the dataset directory.
+download_if_missing <- function(out_dir) {
 
-  ds_dir <- file.path(out_dir, "ubilength_ubiquitin_interactors")
-  contract_ok <-
-    file.exists(file.path(ds_dir, "proteinGroups.tsv")) &&
-    file.exists(file.path(ds_dir, "experimental_design.csv"))
+  # Expected location of the materialized dataset.
+  ds_dir <- file.path(
+    out_dir,
+    "ubilength_ubiquitin_interactors"
+  )
 
-  if (!contract_ok) {
-    download(out_dir = out_dir, dep_version = dep_version, tar_url = tar_url)
+  # These files define a complete local copy of the dataset for this workflow.
+  required_files <- c(
+    "proteinGroups.tsv",
+    "experimental_design.csv",
+    "SOURCE.txt"
+  )
+
+  # Download again if any required file is absent.
+  # Checking the files themselves is safer than checking only whether the
+  # dataset directory exists, because a previous download may have stopped early.
+  if (!all(
+    file.exists(
+      file.path(
+        ds_dir,
+        required_files
+      )
+    )
+  )) {
+    download(out_dir)
   }
 
+  # Return the dataset directory without printing it automatically.
   invisible(ds_dir)
 }
