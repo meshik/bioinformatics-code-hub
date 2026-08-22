@@ -31,6 +31,10 @@ Good at bioinformatics? Consider contributing your code!
 - DNA methylation
   - Illumina array ([450k](epigenomics/dna_methylation/r.ipynb), 850k, EPIC)
 
+### Proteomics
+- Differential Abundance:
+  - [proDA](proteomics/differential_abundance/r.ipynb)
+
 Datasets used:
    - Bulk RNA-Seq:
      - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164073 
