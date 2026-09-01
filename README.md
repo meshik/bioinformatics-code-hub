@@ -35,15 +35,21 @@ Good at bioinformatics? Consider contributing your code!
 - Differential Abundance:
   - [proDA](proteomics/differential_abundance/r.ipynb)
 
-Datasets used:
-   - Bulk RNA-Seq:
-     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164073 
-   - Single-cell RNA-Seq:
-     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
-   - Spatial transcriptomics:
-     - https://data.mendeley.com/datasets/mbvhhf8m62/2
-   - Transcriptomics:
-     - https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229677
+## Datasets used
+
+<!-- DATASETS:START -->
+<!-- Generated from datasets.yml by scripts/render_datasets.py. Do not edit manually. -->
+
+| Data type | Dataset | Used in |
+| --- | --- | --- |
+| Bulk RNA-seq | [GSE164073](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164073) — SARS-CoV-2 infection of human cornea, limbus, and sclera | [DESeq2](transcriptomics/bulk/DESeq2/r.ipynb), [PyDESeq2](transcriptomics/bulk/DESeq2/py.ipynb) |
+| Bulk RNA-seq | [GSE229677](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229677) — Mouse endocardium | [Kallisto data source](transcriptomics/kallisto/data/README.md) |
+| Single-cell RNA-seq | [GSE109816](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816) — Human adult normal heart | [Single-cell analyses](transcriptomics/single-cell/data/README.md) |
+| Single-cell RNA-seq | [E-MTAB-13632](https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13632) — Human organogenesis model | [FASTQ to counts with STARsolo](transcriptomics/single-cell/fastq-to-counts/10x-gene-expression-starsolo/bash.ipynb) |
+| Spatial transcriptomics | [mbvhhf8m62 v2](https://data.mendeley.com/datasets/mbvhhf8m62/2) — Spatial transcriptomics dataset | [Spatial transcriptomics analysis](transcriptomics/spatial-transcriptomics/basic%20analysis/r.ipynb) |
+| DNA methylation | [GSE47915](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE47915) — Benign and tumor prostate tissue on Illumina 450K arrays | [Illumina 450K analysis](epigenomics/dna_methylation/r.ipynb) |
+| Proteomics | [UbiLength](https://doi.org/10.1016/j.molcel.2017.01.004) — Interactors of linear ubiquitin baits of different lengths (Zhang et al., 2017; distributed with DEP 1.32.0) | [Differential abundance with proDA](proteomics/differential_abundance/r.ipynb) |
+<!-- DATASETS:END -->
 
  
 Contributions are welcome ❤️

@@ -5,4 +5,6 @@
 !**/data/**/downloaders/**
 
 .venv/
+__pycache__/
+*.py[cod]
 *.vscode*

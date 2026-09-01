@@ -1,0 +1,67 @@
+# This file is the source of truth for the dataset table in README.md.
+# After editing it, run: python scripts/render_datasets.py
+schema_version: 1
+
+datasets:
+  - id: GSE164073
+    name: SARS-CoV-2 infection of human cornea, limbus, and sclera
+    data_type: Bulk RNA-seq
+    source_url: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164073
+    analyses:
+      - label: DESeq2
+        path: transcriptomics/bulk/DESeq2/r.ipynb
+      - label: PyDESeq2
+        path: transcriptomics/bulk/DESeq2/py.ipynb
+
+  - id: GSE229677
+    name: Mouse endocardium
+    data_type: Bulk RNA-seq
+    source_url: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229677
+    analyses:
+      - label: Kallisto data source
+        path: transcriptomics/kallisto/data/README.md
+
+  - id: GSE109816
+    name: Human adult normal heart
+    data_type: Single-cell RNA-seq
+    source_url: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE109816
+    analyses:
+      - label: Single-cell analyses
+        path: transcriptomics/single-cell/data/README.md
+
+  - id: E-MTAB-13632
+    name: Human organogenesis model
+    data_type: Single-cell RNA-seq
+    source_url: https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13632
+    analyses:
+      - label: FASTQ to counts with STARsolo
+        path: transcriptomics/single-cell/fastq-to-counts/10x-gene-expression-starsolo/bash.ipynb
+
+  - id: mbvhhf8m62
+    name: Spatial transcriptomics dataset
+    version: "2"
+    data_type: Spatial transcriptomics
+    source_url: https://data.mendeley.com/datasets/mbvhhf8m62/2
+    downloader: transcriptomics/spatial-transcriptomics/data/downloaders/download_mbvhhf8m62_filtered_st.R
+    analyses:
+      - label: Spatial transcriptomics analysis
+        path: transcriptomics/spatial-transcriptomics/basic analysis/r.ipynb
+
+  - id: GSE47915
+    name: Benign and tumor prostate tissue on Illumina 450K arrays
+    data_type: DNA methylation
+    source_url: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE47915
+    downloader: epigenomics/dna_methylation/data/downloaders/download_geo_gse47915.R
+    analyses:
+      - label: Illumina 450K analysis
+        path: epigenomics/dna_methylation/r.ipynb
+
+  - id: UbiLength
+    name: Interactors of linear ubiquitin baits of different lengths
+    data_type: Proteomics
+    source_url: https://doi.org/10.1016/j.molcel.2017.01.004
+    citation: Zhang et al., 2017; distributed with DEP 1.32.0
+    downloader: proteomics/differential_abundance/data/downloaders/download_ubilength.R
+    analyses:
+      - label: Differential abundance with proDA
+        path: proteomics/differential_abundance/r.ipynb
