@@ -1,4 +1,6 @@
 # This file is the source of truth for the dataset table in README.md.
+# Required per dataset: id, name, data_type, source_url, and analyses.
+# Optional: version, citation, license, license_url, and downloader.
 # After editing it, run: python scripts/render_datasets.py
 schema_version: 1
 
@@ -38,10 +40,13 @@ datasets:
         path: transcriptomics/single-cell/fastq-to-counts/10x-gene-expression-starsolo/bash.ipynb
 
   - id: mbvhhf8m62
-    name: Spatial transcriptomics dataset
+    name: Developmental heart - filtered and unfiltered count matrices and meta tables
     version: "2"
     data_type: Spatial transcriptomics
     source_url: https://data.mendeley.com/datasets/mbvhhf8m62/2
+    citation: "Asp, M. (2021), Mendeley Data, V2, doi: 10.17632/mbvhhf8m62.2"
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
     downloader: transcriptomics/spatial-transcriptomics/data/downloaders/download_mbvhhf8m62_filtered_st.R
     analyses:
       - label: Spatial transcriptomics analysis

@@ -30,7 +30,13 @@ REQUIRED_DATASET_FIELDS = {
     "source_url",
     "analyses",
 }
-OPTIONAL_DATASET_FIELDS = {"version", "citation", "downloader"}
+OPTIONAL_DATASET_FIELDS = {
+    "version",
+    "citation",
+    "license",
+    "license_url",
+    "downloader",
+}
 ANALYSIS_FIELDS = {"label", "path"}
 
 
@@ -106,9 +112,18 @@ def load_and_validate_manifest() -> list[dict[str, object]]:
         if parsed_url.scheme != "https" or not parsed_url.netloc:
             fail(f"{location}.source_url must be an absolute HTTPS URL")
 
-        for optional_text in ("version", "citation"):
+        for optional_text in ("version", "citation", "license"):
             if optional_text in dataset:
                 require_text(dataset[optional_text], f"{location}.{optional_text}")
+        if "license_url" in dataset:
+            if "license" not in dataset:
+                fail(f"{location}.license_url requires a license field")
+            license_url = require_text(
+                dataset["license_url"], f"{location}.license_url"
+            )
+            parsed_license_url = urlparse(license_url)
+            if parsed_license_url.scheme != "https" or not parsed_license_url.netloc:
+                fail(f"{location}.license_url must be an absolute HTTPS URL")
         if "downloader" in dataset:
             validate_repo_path(dataset["downloader"], f"{location}.downloader")
 
@@ -150,6 +165,11 @@ def render_table(datasets: list[dict[str, object]]) -> str:
         dataset_cell = f"[{display_id}]({dataset['source_url']}) — {dataset['name']}"
         if "citation" in dataset:
             dataset_cell += f" ({dataset['citation']})"
+        if "license" in dataset:
+            license_text = str(dataset["license"])
+            if "license_url" in dataset:
+                license_text = f"[{license_text}]({dataset['license_url']})"
+            dataset_cell += f" — License: {license_text}"
 
         analysis_links = []
         for analysis in dataset["analyses"]:  # type: ignore[union-attr]

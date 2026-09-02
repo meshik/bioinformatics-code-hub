@@ -12,12 +12,8 @@ Analyses should have at least the following parts:
 
 ## Registering datasets
 
-`datasets.yml` is the source of truth for datasets used by analyses. When adding or changing a dataset:
-
-1. Add its metadata and at least one analysis path to `datasets.yml`.
-2. If needed, install the documentation dependency with `python -m pip install -r scripts/requirements.txt`.
-3. Run `python scripts/render_datasets.py` from the repository root.
-4. Commit both `datasets.yml` and the generated `README.md` change.
+`datasets.yml` is the source of truth for datasets used by analyses. When adding or changing a dataset add its metadata and at least one analysis path to `datasets.yml`.
+Only `id`, `name`, `data_type`, `source_url`, and `analyses` are required. Add `version`, `citation`, `license`, `license_url`, or `downloader` when that information is known and applicable.
 
 Do not edit the generated dataset table in `README.md` directly. CI validates the manifest, checks that referenced repository files exist, and verifies that the generated table is current.
 
